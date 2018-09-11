@@ -24,6 +24,11 @@ private slots:
     void on_openImg_clicked();
 
 private:
+    void showOriImage(Mat &matImage);
+    void showGrayImage(Mat &matImage);
+    void showGaussianImage(Mat &matImage);
+
+private:
     Ui::MainWindow *ui;
     Mat m_image;
 };
