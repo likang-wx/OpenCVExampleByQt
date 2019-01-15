@@ -27,6 +27,9 @@ private:
     void showOriImage(Mat &matImage);
     void showGrayImage(Mat &matImage);
     void showGaussianImage(Mat &matImage);
+    void showBlurImage(Mat &matImage);
+    void showCannyFalseImage(Mat &matImage);
+    void showCannyTrueImage(Mat &matImage);
 
 private:
     Ui::MainWindow *ui;

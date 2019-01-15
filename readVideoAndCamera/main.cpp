@@ -2,10 +2,39 @@
 #include <QApplication>
 #include <QDebug>
 
-#include<opencv2/opencv.hpp>
+//#include<opencv2/opencv.hpp>
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 using namespace cv;
 using namespace std;
+
+void showVideo(VideoCapture& cap)
+{
+    Mat frame;
+    while(1)
+    {
+        cap>>frame;//等价于cap.read(frame);
+        if(frame.empty())
+            break;
+
+#if 0
+        cvtColor(frame, frame, CV_BGR2HSV);//BGR空间转为HSV颜色空间，注意，两者不能同时对同一张图片（在此为frame）进行处理，否则报错
+#endif
+
+#if 1
+        /*
+         * 边缘检测 必须先要转为灰度图
+        */
+        cvtColor(frame,frame,CV_BGR2GRAY); //转为灰度图
+        Canny(frame, frame, 30, 100,3,true);//canny边缘检测，去掉这一行就是纯粹的读取摄像头了
+#endif
+
+        imshow("video", frame);
+        if(waitKey(20)>0)//按下任意键退出摄像头　　因电脑环境而异，有的电脑可能会出现一闪而过的情况
+            break;
+    }
+}
 
 void testVideo()
 {
@@ -27,21 +56,10 @@ void testVideo()
     qDebug()<<"视频总帧数="<<totalFrames;
     qDebug()<<"帧率="<<frameRate;
 
-    Mat frame;
-    while(1)
-    {
-        cap>>frame;//等价于cap.read(frame);
-        if(frame.empty())//如果某帧为空则退出循环
-            break;
-//        Canny(frame, frame, 30, 100);
-//        cvtColor(frame,frame,CV_BGR2GRAY); //转为灰度图
-        cvtColor(frame, frame, CV_BGR2HSV);//BGR空间转为HSV颜色空间，注意，两者不能同时对同一张图片（在此为frame）进行处理，否则报错
-        imshow("video", frame);
-        if(27 == waitKey(20)) //27是key_esc
-            break;
+    showVideo(cap);
 
-    }
     cap.release();//释放资源
+    destroyAllWindows();//关闭所有窗口
 }
 
 void testCamera()
@@ -52,18 +70,8 @@ void testCamera()
     if(!cap.isOpened())
         return;
 
-    Mat frame;
-    while(1)
-    {
-        cap>>frame;//等价于cap.read(frame);
-//        Canny(frame, frame, 30, 100);//canny边缘检测，去掉这一行就是纯粹的读取摄像头了
-        cvtColor(frame, frame, CV_BGR2HSV);//BGR空间转为HSV颜色空间，注意，两者不能同时对同一张图片（在此为frame）进行处理，否则报错
-        if(frame.empty())
-            break;
-        imshow("video", frame);
-        if(waitKey(20)>0)//按下任意键退出摄像头　　因电脑环境而异，有的电脑可能会出现一闪而过的情况
-            break;
-    }
+    showVideo(cap);
+
     cap.release();
     destroyAllWindows();//关闭所有窗口
 }
@@ -72,9 +80,9 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    testVideo();
+//    testVideo();
 
-//    testCamera();
+    testCamera();
 
     return 0;
 }
